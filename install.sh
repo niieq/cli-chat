@@ -16,7 +16,15 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password_again passwo
 apt-get install mysql-server -y > /dev/null
 
 # Setting up MySQL user and db
-mysql -uroot -padmin -e "CREATE DATABASE clichat" >> /vagrant/vm_build.log 2>&1
+mysql -uroot -padmin -e "CREATE DATABASE clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
+mysql -uroot -padmin -e "USE clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
+mysql -uroot -padmin -e "CREATE TABLE users ( \
+	id int(11) NOT NULL AUTO_INCREMENT, \
+	username varchar(255) NOT NULL, \
+	PRIMARY KEY (id), \
+	UNIQUE (username) \
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin \
+	AUTO_INCREMENT=1;" >> /home/vagrant/cli-chat/vm_build.log 2>&1
 
 echo 'Installing and configuring virtualenvwrapper...'
 pip install --quiet virtualenvwrapper==4.7.0
