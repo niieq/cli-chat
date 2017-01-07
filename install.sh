@@ -18,7 +18,7 @@ apt-get install mysql-server -y > /dev/null
 # Setting up MySQL user and db
 mysql -uroot -padmin -e "CREATE DATABASE clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
 mysql -uroot -padmin -e "USE clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
-mysql -uroot -padmin -e "CREATE TABLE users ( \
+mysql -uroot -padmin -e "CREATE TABLE clichat.users ( \
 	id int(11) NOT NULL AUTO_INCREMENT, \
 	username varchar(255) NOT NULL, \
 	PRIMARY KEY (id), \
