@@ -39,7 +39,11 @@ class ChatServer:
                         self.broadcast_string(newstr, sock)
 
     def accept_new_connection(self):
-        pass
+        newsock, (remhost, remport) = self.sockserver.accept()
+        self.connectors.append(newsock)
+        newsock.send("You're connected to the Python chatserver\r\n")
+        status = 'Client joined %s:%s\r\n' % (remhost, remport)
+        self.broadcast_string(status, newsock)
 
     def send_message(self):
         pass
