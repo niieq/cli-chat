@@ -1,8 +1,8 @@
 '''
 The Chat Server
 '''
-import socket
 import select
+import socket
 
 
 class ChatServer:
