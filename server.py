@@ -10,7 +10,7 @@ class ChatServer:
     def __init__(self, port):
         self.port = port
         self.sockserver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sockserver.bind(('', self.port))
+        self.sockserver.bind(('0.0.0.0', self.port))
         self.sockserver.listen(5)
 
         self.connectors = [self.sockserver]
@@ -54,3 +54,8 @@ class ChatServer:
         host = self.sockserver.getpeername()[0]
         modified_msg = '[{} says ] {}'.format(host, msg)
         receiver.send(modified_msg)
+
+
+if __name__ == '__main__':
+    schat = ChatServer(5600)
+    schat.run()
