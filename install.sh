@@ -18,7 +18,7 @@ apt-get install mysql-server -y > /dev/null
 # Setting up MySQL user and db
 mysql -uroot -padmin -e "CREATE DATABASE clichat" >> /vagrant/vm_build.log 2>&1
 
-echo 'Installing and configuring virtualenv and virtualenvwrapper...'
+echo 'Installing and configuring virtualenvwrapper...'
 pip install --quiet virtualenvwrapper==4.7.0
 
 # setting up virtualenv & installing requirements 
