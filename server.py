@@ -51,4 +51,6 @@ class ChatServer:
                 sock.send(msg)
 
     def send_message(self, msg, receiver):
-        pass
+        host = self.sockserver.getpeername()[0]
+        modified_msg = '[{} says ] {}'.format(host, msg)
+        receiver.send(modified_msg)
