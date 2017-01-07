@@ -2,6 +2,7 @@
 The Chat Server
 '''
 import socket
+import select
 
 
 class ChatServer:
@@ -16,7 +17,26 @@ class ChatServer:
         print('Chatserver started on port {}'.format(self.port))
 
     def run(self):
-        pass
+        while True:
+            read_sockets, write_sockets, error_sockets = select.select(
+                self.connectors, [], [])
+
+            for sock in read_sockets:
+
+                if sock == self.sockserver:
+                    self.accept_new_connection()
+                else:
+                    data = sock.recv(4096)
+                    if data == '':
+                        host, port = sock.getpeername()
+                        status = 'Client left {}:{}\r\n'.format(host, port)
+                        self.broadcast_string(status, sock)
+                        sock.close()
+                        self.connectors.remove(sock)
+                    else:
+                        host, port = sock.getpeername()
+                        newstr = '[{}:{}] {}' % (host, port, data)
+                        self.broadcast_string(newstr, sock)
 
     def accept_new_connection(self):
         pass
