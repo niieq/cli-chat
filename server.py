@@ -45,5 +45,10 @@ class ChatServer:
         status = 'Client joined %s:%s\r\n' % (remhost, remport)
         self.broadcast_string(status, newsock)
 
-    def send_message(self):
+    def broadcast_string(self, msg, omit_sock):
+        for sock in self.descriptors:
+            if sock != self.sockserver and sock != omit_sock:
+                sock.send(msg)
+
+    def send_message(self, msg, receiver):
         pass
