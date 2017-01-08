@@ -14,17 +14,20 @@ Installation
 Usage
 -----
 
-.. code-block:: python
+.. code-block:: bash
 	
 	# Show client's messages - ./client.py username no. of msgs
-	./client.py nii 10
+	$ ./client.py nii 10
 
 	# Show all clients
-	./client.py users
+	$ ./client.py users
 
 	# Chat with user
-	./client.py
-	
-	# $ Welcome! Enter your username > nai
-	# $ nii: Hello nii
+	$ ./client.py
+
+		# Enter username to register or login
+		$ Welcome! Enter your username > nai
+
+		# To send a user a message, type username: message
+		$ nii: It works!
 
