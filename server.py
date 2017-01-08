@@ -61,7 +61,7 @@ class ChatServer:
                                 self.broadcast_string(newstr, sock)
 
                     except:
-                        _user = self.connectors[sock]
+                        _user = sock.getpeername()
                         status = '{} left \r\n'.format(_user)
                         self.broadcast_string(status, sock)
                         sock.close()
@@ -77,7 +77,7 @@ class ChatServer:
         self.broadcast_string(status, newsock)
 
     def broadcast_string(self, msg, omit_sock):
-        for sock in self.connectors.keys():
+        for sock in list(self.connectors):
             if sock != self.sockserver and sock != omit_sock:
                 try:
                     sock.send(bytes(msg, 'utf-8'))
