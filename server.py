@@ -39,26 +39,29 @@ class ChatServer:
                 if sock == self.sockserver:
                     self.accept_new_connection()
                 else:
-                    data = sock.recv(1024)
-                    if data == '':
-                        host, port = sock.getpeername()
-                        status = 'Client left {}:{}\r\n'.format(host, port)
+                    # Data recieved from client, process it
+                    try:
+                        data = sock.recv(1024)
+                        if data:
+                            _user = self.connectors[sock]
+                            msg = data.decode('utf-8')
+                            if msg.find(':') != -1:
+                                for k, v in self.connectors.items():
+                                    if v == msg.split(':')[0]:
+                                        _to = k
+                                        break
+                                self.send_message(msg.split(':')[1], _to, _user)
+                            else:
+                                newstr = '{}'.format(data)
+                                self.broadcast_string(newstr, sock)
+
+                    except:
+                        _user = self.connectors[sock]
+                        status = '{} left \r\n'.format(_user)
                         self.broadcast_string(status, sock)
                         sock.close()
                         del self.connectors[sock]
-                    else:
-                        # host, port = sock.getpeername()
-                        _user = self.connectors[sock]
-                        msg = data.decode('utf-8')
-                        if msg.find(':') != -1:
-                            for k, v in self.connectors.items():
-                                if v == msg.split(':')[0]:
-                                    _to = k
-                                    break
-                            self.send_message(msg.split(':')[1], _to, _user)
-                        else:
-                            newstr = '{}'.format(data)
-                            self.broadcast_string(newstr, sock)
+                        continue
 
     def accept_new_connection(self):
         newsock, (remhost, remport) = self.sockserver.accept()
