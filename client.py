@@ -33,6 +33,22 @@ def get_or_create(username):
     return uname
 
 
+def get_users():
+    '''
+    Return all users
+    '''
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT username FROM users"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            if len(result) > 0:
+                for res in result:
+                    print(res['username'])
+    except:
+        print('Something weird')
+
+
 def prompt():
     sys.stdout.write('You > ')
     sys.stdout.flush()
@@ -91,6 +107,19 @@ class ChatClient:
 
 
 if __name__ == '__main__':
-    name = input('Welcome! Enter your username > ')
-    cchat = ChatClient('127.0.0.1', 5400, name)
-    cchat.run()
+
+    if(len(sys.argv) == 2):
+        if sys.argv[1] == 'users':
+            get_users()
+        else:
+            print('Usage : python3 client.py users')
+            sys.exit()
+
+    elif(len(sys.argv) == 3):
+        user = sys.argv[1]
+        num = sys.argv[2]
+
+        if not isinstance(int, num):
+            print('Number of messages show be an integer')
+            print('Usage : python3 username 10')
+            sys.exit()
