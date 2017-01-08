@@ -7,13 +7,14 @@ import socket
 from connectdb import connection
 
 
-def save_message(message, user):
+def save_message(message, user, sender):
     try:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO messages (username, message) VALUES (%s, %s)"
-            cursor.execute(sql, (user, message))
+            sql = "INSERT INTO messages (username, message, sender) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (user, message, sender))
         connection.commit()
-    except:
+    except Exception as e:
+        print(e)
         print('Didn\'t save. Try Again')
 
 
@@ -46,11 +47,15 @@ class ChatServer:
                             _user = self.connectors[sock]
                             msg = data.decode('utf-8')
                             if msg.find(':') != -1:
+                                online = False
+                                _to = msg.split(':')[0]
                                 for k, v in self.connectors.items():
                                     if v == msg.split(':')[0]:
                                         _to = k
+                                        online = True
                                         break
-                                self.send_message(msg.split(':')[1], _to, _user)
+                                self.send_message(
+                                    msg.split(':')[1], _to, _user, online)
                             else:
                                 newstr = '{}'.format(data)
                                 self.broadcast_string(newstr, sock)
@@ -80,12 +85,15 @@ class ChatServer:
                     sock.close()
                     del self.connectors[sock]
 
-    def send_message(self, msg, receiver, sender):
+    def send_message(self, msg, receiver, sender, online):
         modified_msg = '{} > {}'.format(sender, msg.lstrip())
-        receiver.send(bytes(modified_msg, 'utf-8'))
-        save_message(msg.lstrip(), sender)
+        reciever_name = receiver
+        if online:
+            receiver.send(bytes(modified_msg, 'utf-8'))
+            reciever_name = self.connectors[receiver]
+        save_message(msg.lstrip(), reciever_name, sender)
 
 
 if __name__ == '__main__':
-    schat = ChatServer(5400)
+    schat = ChatServer(5700)
     schat.run()
