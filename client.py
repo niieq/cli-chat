@@ -53,13 +53,13 @@ def get_users():
 def users_messages(user, num):
     try:
         with connection.cursor() as cursor:
-            sql = "SELECT message FROM messages WHERE username = %s LIMIT %s"
+            sql = "SELECT message, sender FROM messages WHERE username = %s LIMIT %s"
             cursor.execute(sql, (user, num))
             result = cursor.fetchall()
             if len(result) > 0:
                 for i, res in enumerate(result):
                     i += 1
-                    print('{}: {}'.format(i, res['message']))
+                    print('{}: {} said {}'.format(i, res['sender'], res['message']))
             else:
                 print('Empty results')
     except:
@@ -144,5 +144,5 @@ if __name__ == '__main__':
 
     else:
         name = input('Welcome! Enter your username > ')
-        cchat = ChatClient('127.0.0.1', 5400, name)
+        cchat = ChatClient('127.0.0.1', 5700, name)
         cchat.run()
