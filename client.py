@@ -46,7 +46,23 @@ def get_users():
                 for res in result:
                     print(res['username'])
     except:
-        print('Something weird')
+        print('Something weird. Try again')
+
+
+def users_messages(user, num):
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT message FROM messages WHERE username = %s LIMIT %s"
+            cursor.execute(sql, (user, num))
+            result = cursor.fetchall()
+            if len(result) > 0:
+                for i, res in enumerate(result):
+                    i += 1
+                    print('{}: {}'.format(i, res['message']))
+            else:
+                print('Empty results')
+    except:
+        print('User not found. Try again')
 
 
 def prompt():
@@ -117,9 +133,15 @@ if __name__ == '__main__':
 
     elif(len(sys.argv) == 3):
         user = sys.argv[1]
-        num = sys.argv[2]
+        num = int(sys.argv[2])
 
-        if not isinstance(int, num):
+        if not isinstance(num, int):
             print('Number of messages show be an integer')
             print('Usage : python3 username 10')
             sys.exit()
+        users_messages(user, num)
+
+    else:
+        name = input('Welcome! Enter your username > ')
+        cchat = ChatClient('127.0.0.1', 5400, name)
+        cchat.run()
