@@ -18,7 +18,10 @@ def get_or_create(username):
             sql = "SELECT * FROM users WHERE username=%s"
             cursor.execute(sql, username)
             result = cursor.fetchone()
-            uname = result['username']
+            if result:
+                uname = result['username']
+            else:
+                raise
     except:
         with connection.cursor() as cursor:
             sql = "INSERT INTO users (username) VALUES (%s)"
@@ -28,6 +31,11 @@ def get_or_create(username):
     finally:
         connection.close()
     return uname
+
+
+def prompt():
+    sys.stdout.write('<You> ')
+    sys.stdout.flush()
 
 
 class ChatClient:
@@ -47,7 +55,37 @@ class ChatClient:
             sys.exit()
 
         print('Connected to remote host. Start sending messages')
+        self.csocket.send(bytes(username, 'utf-8'))
+        prompt()
+
+    def run(self):
+        while True:
+            socket_list = [sys.stdin, self.csocket]
+
+            # Get the list sockets which are readable
+            read_sockets, write_sockets, error_sockets = select.select(
+                socket_list, [], [])
+
+            for sock in read_sockets:
+                # incoming message from remote server
+                if sock == self.csocket:
+                    data = sock.recv(1024)
+                    if not data:
+                        print('\nDisconnected from chat server')
+                        sys.exit()
+                    else:
+                        # print data
+                        sys.stdout.write(data.decode('utf-8'))
+                        prompt()
+
+                # user entered a message
+                else:
+                    msg = sys.stdin.readline()
+                    self.csocket.send(msg)
+                    prompt()
 
 
 if __name__ == '__main__':
-    print(get_or_create('nii'))
+    name = input('Welcome! Enter your username > ')
+    cchat = ChatClient('127.0.0.1', 5900, name)
+    cchat.run()
