@@ -29,6 +29,7 @@ mysql -uroot -padmin -e "CREATE TABLE IF NOT EXISTS	clichat.messages ( \
 	id int(11) NOT NULL AUTO_INCREMENT, \
 	username varchar(255) NOT NULL, \
 	message varchar(255) NOT NULL, \
+	sender varchar(255) NOT NULL, \
 	PRIMARY KEY (id) \
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin \
 	AUTO_INCREMENT=1;" >> /home/vagrant/cli-chat/vm_build.log 2>&1
