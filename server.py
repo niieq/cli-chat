@@ -13,42 +13,52 @@ class ChatServer:
         self.sockserver.bind(('', self.port))
         self.sockserver.listen(5)
 
-        self.connectors = [self.sockserver]
+        self.connectors = {}
+        self.connectors['server'] = self.sockserver
         print('Chatserver started on port {}'.format(self.port))
 
     def run(self):
         while True:
             read_sockets, write_sockets, error_sockets = select.select(
-                self.connectors, [], [])
+                self.connectors.values(), [], [])
 
             for sock in read_sockets:
 
                 if sock == self.sockserver:
                     self.accept_new_connection()
                 else:
-                    data = sock.recv(4096)
+                    data = sock.recv(1024)
                     if data == '':
                         host, port = sock.getpeername()
                         status = 'Client left {}:{}\r\n'.format(host, port)
                         self.broadcast_string(status, sock)
                         sock.close()
-                        self.connectors.remove(sock)
+                        for k, v in self.connectors.items():
+                            if v == sock:
+                                del self.connectors[k]
                     else:
                         host, port = sock.getpeername()
-                        newstr = '[{}:{}] {}' % (host, port, data)
+                        newstr = '[{}:{}] {}'.format(host, port, data)
                         self.broadcast_string(newstr, sock)
 
     def accept_new_connection(self):
         newsock, (remhost, remport) = self.sockserver.accept()
-        self.connectors.append(newsock)
-        newsock.send("You're connected to the Python chatserver\r\n")
-        status = 'Client joined %s:%s\r\n' % (remhost, remport)
+        username = newsock.recv(1024).decode('utf-8')
+        self.connectors[username] = newsock
+        newsock.send(bytes("You're connected to the chatserver\r\n", 'utf-8'))
+        status = 'Client joined {}:{}\r\n'.format(remhost, remport)
         self.broadcast_string(status, newsock)
 
     def broadcast_string(self, msg, omit_sock):
-        for sock in self.descriptors:
+        for sock in self.connectors.values():
             if sock != self.sockserver and sock != omit_sock:
-                sock.send(msg)
+                try:
+                    sock.send(bytes(msg, 'utf-8'))
+                except:
+                    sock.close()
+                    for k, v in self.connectors.items():
+                        if v == sock:
+                            del self.connectors[k]
 
     def send_message(self, msg, receiver):
         host = self.sockserver.getpeername()[0]
@@ -57,5 +67,5 @@ class ChatServer:
 
 
 if __name__ == '__main__':
-    schat = ChatServer(5600)
+    schat = ChatServer(5900)
     schat.run()
