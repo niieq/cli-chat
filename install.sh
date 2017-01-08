@@ -16,13 +16,20 @@ debconf-set-selections <<< "mysql-server mysql-server/root_password_again passwo
 apt-get install mysql-server -y > /dev/null
 
 # Setting up MySQL user and db
-mysql -uroot -padmin -e "CREATE DATABASE clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
+mysql -uroot -padmin -e "CREATE DATABASE IF NOT EXISTS clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
 mysql -uroot -padmin -e "USE clichat" >> /home/vagrant/cli-chat/vm_build.log 2>&1
-mysql -uroot -padmin -e "CREATE TABLE clichat.users ( \
+mysql -uroot -padmin -e "CREATE TABLE IF NOT EXISTS clichat.users ( \
 	id int(11) NOT NULL AUTO_INCREMENT, \
 	username varchar(255) NOT NULL, \
 	PRIMARY KEY (id), \
 	UNIQUE (username) \
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin \
+	AUTO_INCREMENT=1;" >> /home/vagrant/cli-chat/vm_build.log 2>&1
+mysql -uroot -padmin -e "CREATE TABLE IF NOT EXISTS	clichat.messages ( \
+	id int(11) NOT NULL AUTO_INCREMENT, \
+	username varchar(255) NOT NULL, \
+	message varchar(255) NOT NULL, \
+	PRIMARY KEY (id) \
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin \
 	AUTO_INCREMENT=1;" >> /home/vagrant/cli-chat/vm_build.log 2>&1
 
