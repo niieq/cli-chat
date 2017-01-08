@@ -27,14 +27,14 @@ def get_or_create(username):
             sql = "INSERT INTO users (username) VALUES (%s)"
             cursor.execute(sql, username)
         connection.commit()
-        uname = result.username
+        uname = username
     finally:
         connection.close()
     return uname
 
 
 def prompt():
-    sys.stdout.write('<You> ')
+    sys.stdout.write('You > ')
     sys.stdout.flush()
 
 
@@ -54,7 +54,7 @@ class ChatClient:
 
             sys.exit()
 
-        print('Connected to remote host. Start sending messages')
+        print('You are Connected. username: message')
         self.csocket.send(bytes(username, 'utf-8'))
         prompt()
 
@@ -75,17 +75,22 @@ class ChatClient:
                         sys.exit()
                     else:
                         # print data
-                        sys.stdout.write(data.decode('utf-8'))
+                        print("\r", data.decode('utf-8'), end="")
                         prompt()
 
                 # user entered a message
                 else:
                     msg = sys.stdin.readline()
-                    self.csocket.send(msg)
+                    if msg.find(':') != -1:
+                        self.csocket.send(bytes(msg, 'utf-8'))
+                    elif msg == 'q':
+                        sys.exit()
+                    else:
+                        print('The Format must be username: message ')
                     prompt()
 
 
 if __name__ == '__main__':
     name = input('Welcome! Enter your username > ')
-    cchat = ChatClient('127.0.0.1', 5900, name)
+    cchat = ChatClient('127.0.0.1', 5400, name)
     cchat.run()
