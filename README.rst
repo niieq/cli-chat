@@ -1,7 +1,7 @@
-MPower Python Client Library
+CLI Chat
 ============================
 
-This is a Python library for accessing the MPower Payments HTTP API.
+A commandline Chat Application
 
 Installation
 ------------
@@ -24,9 +24,7 @@ Usage
 
 	# Chat with user
 	./client.py
-
-	.. code-block:: bash
-
-		$ Welcome! Enter your username > nai
-		$ nii: Hello nii
+	
+	# $ Welcome! Enter your username > nai
+	# $ nii: Hello nii
 
