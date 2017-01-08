@@ -3,6 +3,17 @@ The Chat Server
 '''
 import select
 import socket
+from connectdb import connection
+
+
+def save_message(message, user):
+    try:
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO messages (username, message) VALUES (%s, %s)"
+            cursor.execute(sql, (message, user))
+        connection.commit()
+    except:
+        print('Didn\'t save. Try Again')
 
 
 class ChatServer:
@@ -66,8 +77,9 @@ class ChatServer:
                     del self.connectors[sock]
 
     def send_message(self, msg, receiver, sender):
-        modified_msg = '{} > {}'.format(sender, msg)
+        modified_msg = '{} > {}'.format(sender, msg.lstrip())
         receiver.send(bytes(modified_msg, 'utf-8'))
+        save_message(msg.lstrip(), sender)
 
 
 if __name__ == '__main__':
