@@ -10,7 +10,7 @@ def save_message(message, user):
     try:
         with connection.cursor() as cursor:
             sql = "INSERT INTO messages (username, message) VALUES (%s, %s)"
-            cursor.execute(sql, (message, user))
+            cursor.execute(sql, (user, message))
         connection.commit()
     except:
         print('Didn\'t save. Try Again')
