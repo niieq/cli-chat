@@ -25,9 +25,9 @@ Usage
 	# Chat with user
 	$ ./client.py
 
-		# Enter username to register or login
-		$ Welcome! Enter your username > nai
+	# Enter username to register or login
+	$ Welcome! Enter your username > nai
 
-		# To send a user a message, type username: message
-		$ nii: It works!
+	# To send a user a message, type username: message
+	$ nii: It works!
 
