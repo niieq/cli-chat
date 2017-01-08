@@ -59,7 +59,8 @@ def users_messages(user, num):
             if len(result) > 0:
                 for i, res in enumerate(result):
                     i += 1
-                    print('{}: {} said {}'.format(i, res['sender'], res['message']))
+                    print('{}: {} said {}'.format(
+                        i, res['sender'], res['message']))
             else:
                 print('Empty results')
     except:
@@ -87,7 +88,7 @@ class ChatClient:
 
             sys.exit()
 
-        print('You are Connected. username: message')
+        print('You are Connected. username: message \n Please C^out to quit')
         self.csocket.send(bytes(username, 'utf-8'))
         prompt()
 
@@ -116,8 +117,6 @@ class ChatClient:
                     msg = sys.stdin.readline()
                     if msg.find(':') != -1:
                         self.csocket.send(bytes(msg, 'utf-8'))
-                    elif msg == 'q':
-                        sys.exit()
                     else:
                         print('The Format must be username: message ')
                     prompt()
@@ -129,16 +128,16 @@ if __name__ == '__main__':
         if sys.argv[1] == 'users':
             get_users()
         else:
-            print('Usage : python3 client.py users')
+            print('Usage : ./client.py users')
             sys.exit()
 
     elif(len(sys.argv) == 3):
         user = sys.argv[1]
         num = int(sys.argv[2])
 
-        if not isinstance(num, int):
-            print('Number of messages show be an integer')
-            print('Usage : python3 username 10')
+        if num < 0:
+            print('Number of messages show be a positive integer')
+            print('Usage : ./client.py username 10')
             sys.exit()
         users_messages(user, num)
 
